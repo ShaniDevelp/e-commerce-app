@@ -2,11 +2,13 @@ const express =  require('express');
 const router = express.Router();
 const productController = require('../controllers/productController')
 const Auth = require('../middleware/auth');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 
 
 router.get('/', productController.get_All_Products);
 
-router.post('/create', productController.create_Product);
+router.post('/create', upload.fields([{ name: 'thumbnailImage', maxCount: 1 }, { name: 'images', maxCount: 10 }]), productController.create_Product);
 
 router.get('/:id', productController.get_One_Product);
 

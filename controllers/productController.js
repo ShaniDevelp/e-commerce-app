@@ -1,11 +1,24 @@
 const Product = require('../models/product');
+// const multer = require('multer');
+const fs = require('fs');
 
 const asynchandler = require("express-async-handler");
 
 
 exports.get_All_Products = asynchandler(async (req, res, next) => {
-    try{
-        const products = await Product.find({});
+    console.log(req.query.category)
+    let query = Product.find({});
+
+    if (req.query.category) {
+        query = query.find({ category: req.query.category });
+    }
+    if (req.query._limit && req.query._page) {
+        const pageSize = req.query._limit
+        const page = req.query._page
+        query = query.skip(pageSize * (page - 1)).limit(pageSize);
+    }
+    try {
+        const products = await query.exec();
         res.status(202).send(products)
     } catch (error) {
         res.status(400).send(error)
@@ -14,10 +27,10 @@ exports.get_All_Products = asynchandler(async (req, res, next) => {
 
 
 exports.get_One_Product = asynchandler(async (req, res, next) => {
-    try{
+    try {
         const product = await Product.findById(req.params.id);
-        if(!product){
-            res.status(404).send({error : "product not found"})
+        if (!product) {
+            res.status(404).send({ error: "product not found" })
         }
         res.status(200).send(product)
     } catch (error) {
@@ -26,48 +39,86 @@ exports.get_One_Product = asynchandler(async (req, res, next) => {
 });
 
 
-exports.create_Product = asynchandler(async(req, res, next)=> {
+exports.create_Product = asynchandler(async (req, res, next) => {
 
-    console.log(req.body)
-    try{
+    console.log(req.files)
+    try {
+        const { title, brand, description, rating, price, discountprice, stock, category } = req.body;
+        
+        let thumbnailImage = null;
+        let images = [];
 
-        const product = new Product(req.body);
+        // Check if thumbnail exists in request
+        if (req.files && req.files.thumbnailImage) {
+            const thumbnailData = req.files.thumbnailImage[0];
+            thumbnailImage = {
+                data: fs.readFileSync(thumbnailData.path),
+                contentType: thumbnailData.mimetype
+            };
+            fs.unlinkSync(thumbnailData.path); // Remove temporary thumbnail file
+        }
+
+        // Check if images exist in request
+        if (req.files && req.files.images) {
+            images = req.files.images.map(image => ({
+                data: fs.readFileSync(image.path),
+                contentType: image.mimetype
+            }));
+            req.files.images.forEach(image => fs.unlinkSync(image.path)); // Remove temporary image files
+        }
+
+        // Create new product with extracted data
+        const product = new Product({
+            title,
+            brand,
+            description,
+            rating,
+            price,
+            discountprice,
+            stock,
+            category,
+            thumbnailImage,
+            images
+        });
+
+        // Save product to database
         await product.save();
-        res.status(201).send(product)
+
+        res.status(201).send(product);
     } catch (error) {
-        res.status(400).send({message : "error"})
+        console.error('Error creating product:', error);
+        res.status(400).send({ message: 'Error creating product' });
     }
-    // owner: req.user._id
-    // ...req.body, owner: req.user._id
+
 });
 
-exports.update_Product = asynchandler(async(req, res, next)=> {
-    
+exports.update_Product = asynchandler(async (req, res, next) => {
+
     const updates = Object.keys(req.body);
-    const allowedUpdates = ['title', 'description', 'price', 'category', 'quantity' ]
-    const isValidOperation = updates.every((update) =>  allowedUpdates.includes(update));
-    if(!isValidOperation){
-        return res.status(400).send({error : "invalid Updates"})
+    const allowedUpdates = ['title', 'description', 'price', 'category', 'quantity']
+    const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
+    if (!isValidOperation) {
+        return res.status(400).send({ error: "invalid Updates" })
     }
 
-    try{
+    try {
         const product = await Product.findById(req.params.id);
-        if(!product){
+        if (!product) {
             res.status(400).send(error)
         }
         updates.forEach((update) => product[update] = req.body[update])
         await product.save();
         res.send(product)
-    } catch (error){
-        res.status(400).send({message : "error"})   
+    } catch (error) {
+        res.status(400).send({ message: "error" })
     }
 
 });
 
-exports.delete_Product = asynchandler(async(req, res, next) => {
-    try{
+exports.delete_Product = asynchandler(async (req, res, next) => {
+    try {
         const deletedproduct = await Product.findByIdAndDelete(req.params.id);
-        if(!deletedproduct){
+        if (!deletedproduct) {
             res.status(400).send(error)
         }
         res.status(201).send(deletedproduct)
@@ -75,3 +126,8 @@ exports.delete_Product = asynchandler(async(req, res, next) => {
         res.status.send(error)
     }
 });
+
+
+
+// owner: req.user._id
+// ...req.body, owner: req.user._id

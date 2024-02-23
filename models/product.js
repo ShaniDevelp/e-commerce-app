@@ -3,32 +3,48 @@ const Schema = mongoose.Schema;
 
 
 const productSchema = new Schema({
-    owner : {
-        type:  mongoose.Schema.Types.ObjectId,
-        ref : 'User',
-        required : true
-    },
     title : {
         type : String,
-        required : true,
+        // required : true,
+    },
+    brand : {
+        type : String,
+        // required : true,
     },
     description: {
         type: String,
-        required: true
+        // required: true
+    },
+    rating: {
+        type: Number,
+        // required: true
     },
     price : {
         type : Number,
-        required : true
+        // required : true
+    },
+    discountprice : {
+        type : Number,
+        // required : true
+    },
+    stock : {
+        type : Number,
+        // required : true
     },
     category : {
-        type : mongoose.Schema.Types.ObjectId, 
-        ref : 'Category', 
-        required: true
+        type : mongoose.Schema.Types.ObjectId, ref: "Category", 
+        // required: true
     },
-    quantity : {
-        type : Number, 
-        required : true
-    }
+    thumbnailImage: {
+        data: Buffer,
+        contentType: String
+    },
+    images: [
+        {
+            data: Buffer,
+            contentType: String
+        }
+    ]
 }, {timestamps : true});
 
 

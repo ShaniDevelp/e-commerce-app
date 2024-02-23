@@ -21,6 +21,7 @@ exports.create_User = asynchandler( async(req, res, next) => {
 });
 
 exports.login_User = asynchandler(async(req, res, next) => {
+    console.log(req.body)
     try {
         const user = await  findByCredentials(req.body.email, req.body.password);
         const token = await user.generateAuthToken();
@@ -33,7 +34,7 @@ exports.login_User = asynchandler(async(req, res, next) => {
 
 const findByCredentials = async (email, password) => {
     const user = await User.findOne({ email })
-    console.log(email, password)
+    // console.log(email, password)
     if (!user) {
         throw new Error('Unable to log in')
     }
