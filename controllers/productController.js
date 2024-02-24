@@ -46,6 +46,9 @@ exports.create_Product = asynchandler(async (req, res, next) => {
         const { title, brand, description, rating, price, discountprice, stock, category } = req.body;
         
         let thumbnailImage = null;
+        let image1 = null;
+        let image2 = null;
+        let image3 = null;
         let images = [];
 
         // Check if thumbnail exists in request
@@ -56,6 +59,33 @@ exports.create_Product = asynchandler(async (req, res, next) => {
                 contentType: thumbnailData.mimetype
             };
             fs.unlinkSync(thumbnailData.path); // Remove temporary thumbnail file
+        }
+
+        if (req.files && req.files.image1) {
+            const image1Data = req.files.image1[0];
+            image1 = {
+                data: fs.readFileSync(image1Data.path),
+                contentType: image1Data.mimetype
+            };
+            fs.unlinkSync(image1Data.path); // Remove temporary thumbnail file
+        }
+
+        if (req.files && req.files.image2) {
+            const image2Data = req.files.image2[0];
+            image2 = {
+                data: fs.readFileSync(image2Data.path),
+                contentType: image2Data.mimetype
+            };
+            fs.unlinkSync(image2Data.path); // Remove temporary thumbnail file
+        }
+
+        if (req.files && req.files.image3) {
+            const image3Data = req.files.image3[0];
+            image3 = {
+                data: fs.readFileSync(image3Data.path),
+                contentType: image3Data.mimetype
+            };
+            fs.unlinkSync(image3Data.path); // Remove temporary thumbnail file
         }
 
         // Check if images exist in request
@@ -78,7 +108,10 @@ exports.create_Product = asynchandler(async (req, res, next) => {
             stock,
             category,
             thumbnailImage,
-            images
+            image1,
+            image2,
+            image3
+
         });
 
         // Save product to database
