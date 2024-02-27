@@ -20,15 +20,14 @@ const mongoose = require('mongoose');
 
 // DB Connection
 mongoose.set('strictQuery', false);
-const db = 'mongodb+srv://Admin:Fm0pPjC8SSI0BopD@cluster0.ilwkopa.mongodb.net/Farhan_Ecommerce_app?retryWrites=true&w=majority'
+const db = 'mongodb+srv://reactblog:uqQIPFK9jcnTGAGQ@cluster0.7na1v62.mongodb.net/E-commerce?retryWrites=true&w=majority&appName=Cluster0'
 main().catch((err) => console.log(err));
 async function main() {
   await mongoose.connect(db)
   console.log('database connected')
 }
 
-// Fm0pPjC8SSI0BopD
-// Farhan_Ecommerce_app
+// uqQIPFK9jcnTGAGQ
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
