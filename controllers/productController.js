@@ -37,7 +37,7 @@ exports.get_One_Product = asynchandler(async (req, res, next) => {
 });
 
 exports.create_Product = asynchandler(async (req, res, next) => {
-  console.log(req.files);
+  console.log(req.body);
   try {
     const {
       title,
@@ -136,6 +136,7 @@ exports.update_Product = asynchandler(async (req, res, next) => {
     "description",
     "price",
     "stock",
+    "discountPercentage",
     "category",
     "brand",
   ];
@@ -155,7 +156,7 @@ exports.update_Product = asynchandler(async (req, res, next) => {
     await product.save();
     res.send(product);
   } catch (error) {
-    res.status(400).send({ message: "error" });
+    res.status(400).send({ "message": error });
   }
 });
 

@@ -42,8 +42,8 @@ exports.get_All_Orders = asynchandler(async(req, res, next) => {
 });
 
 exports.update_Order = asynchandler(async(req, res, next) => {
-    const orderId = req.body.id
-    const update = req.body.update
+    const orderId = req.params.id
+    const update = req.body
     try{
         const order = await Order.findByIdAndUpdate(orderId, update, {new: true});
         res.status(200).send(order)
@@ -51,7 +51,6 @@ exports.update_Order = asynchandler(async(req, res, next) => {
         res.status(400).send(error);
     }
 });
-
 
 exports.delete_Order = asynchandler(async(req, res, next) => {
     return req
