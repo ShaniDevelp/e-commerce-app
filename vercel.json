@@ -83,8 +83,8 @@
       "dest": "/build/$1"
     },
     {
-      "src": "/public/images/(.+)",
-      "dest": "/public/images/$1"
+      "src": "/uploads/(.*)",
+      "dest": "/uploads/$1"
     }
   ]
 }
