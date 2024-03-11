@@ -36,20 +36,16 @@ const productSchema = new Schema({
         // required: true
     },
     thumbnailImage: {
-        data: Buffer,
-        contentType: String
+        type: String,
     },
     image1: {
-        data: Buffer,
-        contentType: String
+        type: String,
     },
     image2: {
-        data: Buffer,
-        contentType: String
+        type: String,
 },
     image3: {
-        data: Buffer,
-        contentType: String
+        type: String,
     }
 }, { timestamps: true });
 

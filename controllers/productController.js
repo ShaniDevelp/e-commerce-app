@@ -5,19 +5,32 @@ const fs = require("fs");
 const asynchandler = require("express-async-handler");
 
 exports.get_All_Products = asynchandler(async (req, res, next) => {
-  console.log(req.query.category);
   let query = Product.find({});
+  let totalProductsQuery = Product.find({});
 
   if (req.query.category) {
     query = query.find({ category: req.query.category });
+    totalProductsQuery = totalProductsQuery.find({ category: req.query.category });
   }
+  
+  if(req.query._sort && req.query._order){
+    query = query.sort({[req.query._sort]: req.query._order});
+    totalProductsQuery = totalProductsQuery.sort({[req.query._sort]: req.query._order});
+  }
+
+  const totalDocs = await totalProductsQuery.count().exec();
+
+
   if (req.query._limit && req.query._page) {
     const pageSize = req.query._limit;
     const page = req.query._page;
     query = query.skip(pageSize * (page - 1)).limit(pageSize);
   }
+
+
   try {
     const products = await query.exec();
+    res.set('X-Total-Count', totalDocs)
     res.status(202).send(products);
   } catch (error) {
     res.status(400).send(error);
@@ -54,52 +67,23 @@ exports.create_Product = asynchandler(async (req, res, next) => {
     let image1 = null;
     let image2 = null;
     let image3 = null;
-    let images = [];
 
-    // Check if thumbnail exists in request
     if (req.files && req.files.thumbnailImage) {
-      const thumbnailData = req.files.thumbnailImage[0];
-      thumbnailImage = {
-        data: fs.readFileSync(thumbnailData.path),
-        contentType: thumbnailData.mimetype,
-      };
-      fs.unlinkSync(thumbnailData.path); // Remove temporary thumbnail file
+      thumbnailImage = req.files.thumbnailImage[0].filename;
     }
 
     if (req.files && req.files.image1) {
-      const image1Data = req.files.image1[0];
-      image1 = {
-        data: fs.readFileSync(image1Data.path),
-        contentType: image1Data.mimetype,
-      };
-      fs.unlinkSync(image1Data.path); // Remove temporary thumbnail file
-    }
+      image1 = req.files.image1[0].filename;
+    } 
 
     if (req.files && req.files.image2) {
-      const image2Data = req.files.image2[0];
-      image2 = {
-        data: fs.readFileSync(image2Data.path),
-        contentType: image2Data.mimetype,
-      };
-      fs.unlinkSync(image2Data.path); // Remove temporary thumbnail file
+      image2 = req.files.image2[0].filename;
+      
     }
 
     if (req.files && req.files.image3) {
-      const image3Data = req.files.image3[0];
-      image3 = {
-        data: fs.readFileSync(image3Data.path),
-        contentType: image3Data.mimetype,
-      };
-      fs.unlinkSync(image3Data.path); // Remove temporary thumbnail file
-    }
-
-    // Check if images exist in request
-    if (req.files && req.files.images) {
-      images = req.files.images.map((image) => ({
-        data: fs.readFileSync(image.path),
-        contentType: image.mimetype,
-      }));
-      req.files.images.forEach((image) => fs.unlinkSync(image.path)); // Remove temporary image files
+      image3 = req.files.image3[0].filename;
+     
     }
 
     // Create new product with extracted data
@@ -153,6 +137,20 @@ exports.update_Product = asynchandler(async (req, res, next) => {
       res.status(400).send(error);
     }
     updates.forEach((update) => (product[update] = req.body[update]));
+    if (req.files) {
+      if (req.files.thumbnailImage) {
+        product.thumbnailImage = req.files.thumbnailImage[0].filename;
+      }
+      if (req.files.image1) {
+        product.image1 = req.files.image1[0].filename;
+      }
+      if (req.files.image2) {
+        product.image2 = req.files.image2[0].filename;
+      }
+      if (req.files.image3) {
+        product.image3 = req.files.image3[0].filename;
+      }
+    }
     await product.save();
     res.send(product);
   } catch (error) {

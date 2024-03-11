@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 
 exports.get_Cart = asynchandler(async (req, res, next) => {
 
-    const user = req.params.id
+    const user = req.user._id
     try {
         const cart = await Cart.findOne({ user }).populate('products.productId')
         if (cart && cart.products.length > 0) {
@@ -24,7 +24,7 @@ exports.get_Cart = asynchandler(async (req, res, next) => {
 
 exports.create_Cart = asynchandler(async (req, res, next) => {
 
-    const user = req.params.id
+    const user = req.user._id
     const { productId, quantity } = req.body;
 
 
@@ -75,7 +75,7 @@ exports.create_Cart = asynchandler(async (req, res, next) => {
 
 
 exports.update_Product_In_Cart = asynchandler(async (req, res, next) => {
-    const user = req.params.id
+    const user = req.user._id
     const { productId, quantity, decrease } = req.body;
     console.log(user, productId, quantity)
 
@@ -109,7 +109,7 @@ exports.update_Product_In_Cart = asynchandler(async (req, res, next) => {
     })
 
 exports.delete_Product_In_Cart = asynchandler(async (req, res, next) => {
-    const user = req.params.id
+    const user = req.user._id
     const { productId } = req.body;
     console.log(req.body)
     // console.log(productId)

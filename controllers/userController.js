@@ -13,6 +13,7 @@ exports.create_User = asynchandler( async(req, res, next) => {
       
         await user.save()
         const token = await user.generateAuthToken();
+        res.cookie("token", token, {expires: new Date(Date.now() + 3600000)});
         res.status(201).send({user, token})
          
     } catch (error) {
@@ -25,6 +26,7 @@ exports.login_User = asynchandler(async(req, res, next) => {
     try {
         const user = await  findByCredentials(req.body.email, req.body.password);
         const token = await user.generateAuthToken();
+        res.cookie("token", token, {expires: new Date(Date.now() + 3600000)});
         res.send({user, token});
 
     } catch (error) {
@@ -44,6 +46,14 @@ const findByCredentials = async (email, password) => {
     }
         return user
 };
+
+exports.check_User = asynchandler(async(req, res, next) => {
+    if(req.user){
+        const user = req.user
+        const token = req.token
+        res.send({user, token});
+    }
+});
 
 exports.logout_user = asynchandler(async(req, res, next)=> {
     try {
