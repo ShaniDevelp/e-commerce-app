@@ -23,7 +23,7 @@ const db = 'mongodb+srv://Admin:wWeNpL9qCSaya4DZ@cluster0.ilwkopa.mongodb.net/Fa
 main().catch((err) => console.log(err));
 async function main() {
   await mongoose.connect(db)
-  console.log('database connected')
+  console.log('database is connected')
 }
 
 // wWeNpL9qCSaya4DZ
