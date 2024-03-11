@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "devstart": "env-cmd -f ./config/dev.env nodemon app.js",
+    "devstart": "env-cmd -f ./config/dev.env nodemon index.js",
     "serverstart": "SET DEBUG=ecommerce-backend:* & npm run devstart"
   },
   "dependencies": {
