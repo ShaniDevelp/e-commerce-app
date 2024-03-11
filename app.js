@@ -34,7 +34,7 @@ app.set('view engine', 'jade');
 
 app.use(cors({
   exposedHeaders: ['X-Total-Count'],
-  origin: ["https://e-commerce-app-pink-rho.vercel.app"],
+  origin: ["https://e-commerce-app-seven-phi.vercel.app"],
   methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
   credentials: true
 }));
