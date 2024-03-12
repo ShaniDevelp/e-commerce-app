@@ -21,10 +21,10 @@ exports.get_All_Products = asynchandler(async (req, res, next) => {
     query = query.find({ category: req.query.category });
     totalProductsQuery = totalProductsQuery.find({ category: req.query.category });
   }
-  
-  if(req.query._sort && req.query._order){
-    query = query.sort({[req.query._sort]: req.query._order});
-    totalProductsQuery = totalProductsQuery.sort({[req.query._sort]: req.query._order});
+
+  if (req.query._sort && req.query._order) {
+    query = query.sort({ [req.query._sort]: req.query._order });
+    totalProductsQuery = totalProductsQuery.sort({ [req.query._sort]: req.query._order });
   }
 
   const totalDocs = await totalProductsQuery.count().exec();
@@ -60,39 +60,39 @@ exports.get_One_Product = asynchandler(async (req, res, next) => {
 
 exports.create_Product = asynchandler(async (req, res, next) => {
 
-    let thumbnailImage = null;
-    let image1 = null;
-    let image2 = null;
-    let image3 = null;
+  let thumbnailImage = null;
+  let image1 = null;
+  let image2 = null;
+  let image3 = null;
 
-    if (req.files && req.files.thumbnailImage) {
-      const path =  req.files.thumbnailImage[0].path
-      thumbnailImage = await uploadImage( path)
-      
-    }
+  if (req.files && req.files.thumbnailImage) {
+    const path = req.files.thumbnailImage[0].path
+    thumbnailImage = await uploadImage(path)
 
-    if (req.files && req.files.image1) {
-      const path =  req.files.image1[0].path
-      image1 = await uploadImage( path)
-    } 
+  }
 
-    if (req.files && req.files.image2) {
-      const path =  req.files.image2[0].path
-      image2 = await uploadImage( path)
-      
-    }
+  if (req.files && req.files.image1) {
+    const path = req.files.image1[0].path
+    image1 = await uploadImage(path)
+  }
 
-    if (req.files && req.files.image3) {
-      const path =  req.files.image3[0].path
-      image3 = await uploadImage( path)
-    
-    }
+  if (req.files && req.files.image2) {
+    const path = req.files.image2[0].path
+    image2 = await uploadImage(path)
 
-  try{
+  }
+
+  if (req.files && req.files.image3) {
+    const path = req.files.image3[0].path
+    image3 = await uploadImage(path)
+
+  }
+
+  try {
 
 
-    const { title, brand,  description, rating,price, discountPercentage, stock,category,} = req.body;
-         
+    const { title, brand, description, rating, price, discountPercentage, stock, category, } = req.body;
+
     const product = new Product({
       title,
       brand,
@@ -108,17 +108,17 @@ exports.create_Product = asynchandler(async (req, res, next) => {
       image3,
     });
 
-      // Save product to database
+    // Save product to database
     await product.save();
 
     res.status(201).send(product);
 
-  } catch(err){
+  } catch (err) {
     res.status(400).send(err)
-  } 
+  }
 });
 
-const uploadImage = async(imagePath) => {
+const uploadImage = async (imagePath) => {
   try {
     // Upload the image
     const result = await cloudinary.uploader.upload(imagePath);
@@ -156,16 +156,20 @@ exports.update_Product = asynchandler(async (req, res, next) => {
     updates.forEach((update) => (product[update] = req.body[update]));
     if (req.files) {
       if (req.files.thumbnailImage) {
-        product.thumbnailImage = req.files.thumbnailImage[0].filename;
+        const path = req.files.thumbnailImage[0].path
+        product.thumbnailImage = await uploadImage(path)
       }
       if (req.files.image1) {
-        product.image1 = req.files.image1[0].filename;
+        const path = req.files.image1[0].path
+        product.image1 = await uploadImage(path)
       }
       if (req.files.image2) {
-        product.image2 = req.files.image2[0].filename;
+        const path = req.files.image2[0].path
+        product.image2 = await uploadImage(path)
       }
       if (req.files.image3) {
-        product.image3 = req.files.image3[0].filename;
+        const path = req.files.image3[0].path
+        product.image3 = await uploadImage(path)
       }
     }
     await product.save();
