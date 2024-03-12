@@ -1,6 +1,15 @@
 const Product = require("../models/product");
+const cloudinary = require('cloudinary').v2;
+
 // const multer = require('multer');
 const fs = require("fs");
+
+cloudinary.config({
+  cloud_name: 'dlsd0qp6k',
+  api_key: '269248519897585',
+  api_secret: 'ZHeVQAwz-81JdIyNGJSm5thE9zY',
+  secure: true
+});
 
 const asynchandler = require("express-async-handler");
 
@@ -50,18 +59,6 @@ exports.get_One_Product = asynchandler(async (req, res, next) => {
 });
 
 exports.create_Product = asynchandler(async (req, res, next) => {
-  console.log(req.body);
-  try {
-    const {
-      title,
-      brand,
-      description,
-      rating,
-      price,
-      discountPercentage,
-      stock,
-      category,
-    } = req.body;
 
     let thumbnailImage = null;
     let image1 = null;
@@ -69,24 +66,33 @@ exports.create_Product = asynchandler(async (req, res, next) => {
     let image3 = null;
 
     if (req.files && req.files.thumbnailImage) {
-      thumbnailImage = req.files.thumbnailImage[0].filename;
+      const path =  req.files.thumbnailImage[0].path
+      thumbnailImage = await uploadImage( path)
+      
     }
 
     if (req.files && req.files.image1) {
-      image1 = req.files.image1[0].filename;
+      const path =  req.files.image1[0].path
+      image1 = await uploadImage( path)
     } 
 
     if (req.files && req.files.image2) {
-      image2 = req.files.image2[0].filename;
+      const path =  req.files.image2[0].path
+      image2 = await uploadImage( path)
       
     }
 
     if (req.files && req.files.image3) {
-      image3 = req.files.image3[0].filename;
-     
+      const path =  req.files.image3[0].path
+      image3 = await uploadImage( path)
+    
     }
 
-    // Create new product with extracted data
+  try{
+
+
+    const { title, brand,  description, rating,price, discountPercentage, stock,category,} = req.body;
+         
     const product = new Product({
       title,
       brand,
@@ -102,15 +108,26 @@ exports.create_Product = asynchandler(async (req, res, next) => {
       image3,
     });
 
-    // Save product to database
+      // Save product to database
     await product.save();
 
     res.status(201).send(product);
-  } catch (error) {
-    console.error("Error creating product:", error);
-    res.status(400).send({ message: "Error creating product" });
-  }
+
+  } catch(err){
+    res.status(400).send(err)
+  } 
 });
+
+const uploadImage = async(imagePath) => {
+  try {
+    // Upload the image
+    const result = await cloudinary.uploader.upload(imagePath);
+    console.log(result);
+    return result.secure_url;
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 exports.update_Product = asynchandler(async (req, res, next) => {
   const updates = Object.keys(req.body);
@@ -169,6 +186,3 @@ exports.delete_Product = asynchandler(async (req, res, next) => {
     res.status.send(error);
   }
 });
-
-// owner: req.user._id
-// ...req.body, owner: req.user._id

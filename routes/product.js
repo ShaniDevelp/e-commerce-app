@@ -4,12 +4,10 @@ const productController = require('../controllers/productController')
 const Auth = require('../middleware/auth');
 const multer = require('multer');
 var path = require('path');
+require('dotenv').config();
 
 
 const storage = multer.diskStorage({
-    destination: function(req, file, cb){
-        return cb(null, 'uploads')
-    },
     filename: function(req, file, cb){
         return cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname) ) 
     }
@@ -19,6 +17,11 @@ const storage = multer.diskStorage({
 const upload = multer({ 
     storage : storage
 });
+
+
+
+
+
 
 
 router.get('/', Auth, productController.get_All_Products);

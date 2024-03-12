@@ -36,7 +36,7 @@ async function main() {
 
 app.use(cors({
   exposedHeaders: ['X-Total-Count'],
-  origin: ["https://e-commerce-app-murex-eta.vercel.app"],
+  origin: ["https://e-commerce-app-zeta-green.vercel.app"],
   methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
   credentials: true
 }));
