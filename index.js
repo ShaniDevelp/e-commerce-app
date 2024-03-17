@@ -6,6 +6,7 @@ const logger = require('morgan');
 const cors = require('cors')
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const stripe = require("stripe")('sk_test_51Ov2MdSALdH0VXIqycit0M1lBqO9DzX4spxwSLBnqgwwe68gYV5cBgBLRpOW8yu9cfyNoyHuK3RkktXOSPLmV48800ZO0ilefn');
 
 dotenv.config();
 
@@ -34,9 +35,17 @@ async function main() {
 // view engine setup
 
 
+
+
+
+
+
+
+
+
 app.use(cors({
   exposedHeaders: ['X-Total-Count'],
-  origin: ["https://e-commerce-app-zeta-green.vercel.app"],
+  origin: ["http://localhost:3000"],
   methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
   credentials: true
 }));
@@ -46,6 +55,28 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'build')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
+
+
+app.post("/create-payment-intent", async (req, res) => {
+  const { totalAmount } = req.body;
+
+  // Create a PaymentIntent with the order amount and currency
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: totalAmount*100,
+    currency: "Pkr",
+    // payment_method: 'Card',
+    // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
+    automatic_payment_methods: {
+      enabled: true,
+    },
+  });
+
+  res.send({
+    clientSecret: paymentIntent.client_secret,
+  });
+});
 
 
 // app.use('/', indexRouter);
