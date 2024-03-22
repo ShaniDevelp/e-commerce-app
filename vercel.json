@@ -76,15 +76,7 @@
     },
     {
       "src": "/",
-      "dest": "./build/index.html"
-    },
-    {
-      "src": "/(.+)",
-      "dest": "/build/$1"
-    },
-    {
-      "src": "/uploads/(.*)",
-      "dest": "/uploads/$1"
+      "dest": "index.js"
     }
   ]
 }
