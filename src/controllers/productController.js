@@ -1,16 +1,5 @@
 const Product = require("../models/product");
-const cloudinary = require('cloudinary').v2;
-
-// const multer = require('multer');
-const fs = require("fs");
-
-cloudinary.config({
-  cloud_name: 'dlsd0qp6k',
-  api_key: '269248519897585',
-  api_secret: 'ZHeVQAwz-81JdIyNGJSm5thE9zY',
-  secure: true
-});
-
+const uploadImage = require('../utils/cloudinaryUpload')
 const asynchandler = require("express-async-handler");
 
 exports.get_All_Products = asynchandler(async (req, res, next) => {
@@ -118,18 +107,8 @@ exports.create_Product = asynchandler(async (req, res, next) => {
   }
 });
 
-const uploadImage = async (imagePath) => {
-  try {
-    // Upload the image
-    const result = await cloudinary.uploader.upload(imagePath);
-    console.log(result);
-    return result.secure_url;
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 exports.update_Product = asynchandler(async (req, res, next) => {
+
   const updates = Object.keys(req.body);
   const allowedUpdates = [
     "title",
