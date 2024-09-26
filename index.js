@@ -27,7 +27,7 @@ async function main() {
 
 app.use(cors({
   exposedHeaders: ['X-Total-Count'],
-  origin: ["http://localhost:3000"],
+  origin: ["https://farhan-e-commerce-frontend.vercel.app"],
   methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
   credentials: true
 }));
