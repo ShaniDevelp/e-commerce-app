@@ -35,7 +35,6 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
 
 
@@ -63,9 +62,7 @@ app.use('/categories', categoryRouter);
 app.use('/cart', cartRouter);
 app.use('/orders', orderRouter);
 app.use('/addresses', addressRouter);
-app.use('*', (req, res) =>
-  res.sendFile(path.resolve('build',  'index.html'))
-);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
