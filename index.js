@@ -27,7 +27,7 @@ async function main() {
 
 app.use(cors({
   exposedHeaders: ['X-Total-Count'],
-  origin: ["https://e-commerce-app-alpha-livid.vercel.app"],
+  origin: ["https://farhan-e-commerce-frontend.vercel.app"],
   methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
   credentials: true
 }));
